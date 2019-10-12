@@ -8,11 +8,17 @@ import xml.etree.ElementTree as ET
 
 
 # reading the gold standard lists of toponyms and ethnonyms
-with open('data/places_gold-standard.txt', 'r') as places_file:
+with open('data/places_gold-standard_updated.txt', 'r') as places_file:
     places_txt = places_file.read()
 
-with open('data/ethnics_gold-standard.txt', 'r') as ethnics_file:
+with open('data/ethnics_gold-standard_updated.txt', 'r') as ethnics_file:
     ethnics_txt = ethnics_file.read()
+
+# with open('data/places_gold-standard.txt', 'r') as places_file:
+#     places_txt = places_file.read()
+#
+# with open('data/ethnics_gold-standard.txt', 'r') as ethnics_file:
+#     ethnics_txt = ethnics_file.read()
 
 
 # removes all diacritics from a string
@@ -154,8 +160,10 @@ print('eli5.explain_weights(crf, top=100):\n', eli5.format_as_text(eli5.explain_
 # creates CSV-files containing all tokens to which the model has assigned a label that
 # doesn't match the token's label in the training data
 def perf_measure(sents, y_actual, y_hat):
-    f1 = open('results/predicted_tokens.csv', 'w')
-    f2 = open('results/misclassified_tokens.csv', 'w')
+    f1 = open('results/predicted_tokens_updated.csv', 'w')
+    f2 = open('results/misclassified_tokens_updated.csv', 'w')
+    # f1 = open('results/predicted_tokens.csv', 'w')
+    # f2 = open('results/misclassified_tokens.csv', 'w')
     number1 = 0
     number2 = 0
     header = ['no', 'token', 'pos', 'actual_label', 'predicted_label', 'sent_no', 'token_no', 'sent']
