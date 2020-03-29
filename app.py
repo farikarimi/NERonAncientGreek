@@ -157,39 +157,44 @@ print('cross_val_predict:\n\n', pred, '\n\n')
 print('eli5.explain_weights(crf, top=100):\n', eli5.format_as_text(eli5.explain_weights(crf, top=100)))
 
 
-# creates CSV-files containing all tokens to which the model has assigned a label that
-# doesn't match the token's label in the training data
+# creates three CSV files containing:
+# 1. all the predictions the model has made (all_predictions.csv)
+# 2. predictions for the tokens that had a '0' label in the training data (predicted_tokens_updated.csv)
+# 3. predictions where a '0' label has been assigned to a toponym/ethnonym from the training data (misclassified_tokens_updated.csv)
 def perf_measure(sents, y_actual, y_hat):
-    f1 = open('results/predicted_tokens_updated.csv', 'w')
-    f2 = open('results/misclassified_tokens_updated.csv', 'w')
-    # f1 = open('results/predicted_tokens.csv', 'w')
-    # f2 = open('results/misclassified_tokens.csv', 'w')
+    f1 = open('results/all_predictions.csv', 'w')
+    f2 = open('results/predicted_tokens_updated.csv', 'w')
+    f3 = open('results/misclassified_tokens_updated.csv', 'w')
+    # f2 = open('results/predicted_tokens.csv', 'w')
+    # f3 = open('results/misclassified_tokens.csv', 'w')
     number1 = 0
     number2 = 0
+    number3 = 0
     header = ['no', 'token', 'pos', 'actual_label', 'predicted_label', 'sent_no', 'token_no', 'sent']
     writer1 = csv.DictWriter(f1, fieldnames=header)
     writer1.writeheader()
     writer2 = csv.DictWriter(f2, fieldnames=header)
     writer2.writeheader()
+    writer3 = csv.DictWriter(f3, fieldnames=header)
+    writer3.writeheader()
     for i in range(len(y_hat)):
         for j in range(len(y_hat[i])):
+            sent = [sents[i][k][0] for k in range(len(sents[i]))]
+            # all predictions
+            number1 += 1
+            writer1.writerow({
+                'no': str(number1),
+                'token': sents[i][j][0],
+                'pos': sents[i][j][1],
+                'actual_label': sents[i][j][2],
+                'predicted_label': y_hat[i][j],
+                'sent_no': str(i),
+                'token_no': str(j),
+                'sent': ' '.join(sent)
+            })
             if y_actual[i][j] != y_hat[i][j]:
                 # predictions that could be right
                 if y_actual[i][j] == '0':
-                    sent = [sents[i][k][0] for k in range(len(sents[i]))]
-                    number1 += 1
-                    writer1.writerow({
-                        'no': str(number1),
-                        'token': sents[i][j][0],
-                        'pos': sents[i][j][1],
-                        'actual_label': sents[i][j][2],
-                        'predicted_label': y_hat[i][j],
-                        'sent_no': str(i),
-                        'token_no': str(j),
-                        'sent': ' '.join(sent)
-                    })
-                # misclassifications
-                else:
                     number2 += 1
                     writer2.writerow({
                         'no': str(number2),
@@ -201,8 +206,22 @@ def perf_measure(sents, y_actual, y_hat):
                         'token_no': str(j),
                         'sent': ' '.join(sent)
                     })
+                # misclassifications
+                else:
+                    number3 += 1
+                    writer3.writerow({
+                        'no': str(number3),
+                        'token': sents[i][j][0],
+                        'pos': sents[i][j][1],
+                        'actual_label': sents[i][j][2],
+                        'predicted_label': y_hat[i][j],
+                        'sent_no': str(i),
+                        'token_no': str(j),
+                        'sent': ' '.join(sent)
+                    })
     f1.close()
     f2.close()
+    f3.close()
 
 
 perf_measure(sents=sentences, y_actual=y, y_hat=pred)
