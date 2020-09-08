@@ -6,3 +6,5 @@ and classification applied to Ancient Greek. We used a model of data extraction 
 discovery based on machine learning algorithms which is easily customizable for different
 languages. This allowed the creation of a dataset of automatically classified toponyms and
 ethnonyms starting from a small manually annotated list.
+
+Link to DH2020 paper: https://hcommons.org/deposits/item/hc:31889
